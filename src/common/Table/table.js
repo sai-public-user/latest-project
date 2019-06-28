@@ -111,6 +111,11 @@ class Table extends Component {
 
     closeDialog = () => this.setState({ showCmpDialog: false });
 
+    scrolled = (scrollTop, name) => {
+        if(name === 'main' && this.refs.pinned) this.refs.pinned.refs.tbody.scrollTop = scrollTop;
+        if (name === 'pinned') this.refs.tbody.scrollTop = scrollTop;
+    }
+
     render() {
         const {
             pinned, headers,
@@ -139,6 +144,8 @@ class Table extends Component {
                         rows={rows}
                         checked={checked}
                         rowCheckBoxChange={this.rowCheckBoxChange}
+                        onScroll={this.scrolled}
+                        ref="pinned"
                     />)}
                 <div style={{ width: `${100 - (pinnedHeaders.length * 18 + pinnedHeaders.length)}%`, overflowX: 'scroll', overflowY: 'hidden', position: 'relative' }}>
                     <Fragment className="table-head">
@@ -150,7 +157,7 @@ class Table extends Component {
                     </Fragment>
                     <Fragment className="table-body">
                         <CustomTable> */}
-                            <Rows style={{ overflowX: 'visible', overflowY: 'inherit' }}>
+                            <Rows style={{ overflowX: 'visible', overflowY: 'scroll' }} ref="tbody" onScroll={() => this.scrolled(this.refs.tbody.scrollTop, 'main')}>
                                 {Array.isArray(rows) && rows.map(
                                     (row, i) => <Row checked={checked} checkBoxChange={this.rowCheckBoxChange} row={row} key={i} headers={filteredHeaders} pinned={pinned} />
                                 )}
